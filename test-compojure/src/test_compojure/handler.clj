@@ -33,8 +33,8 @@
   ; are not.  So they need to be access by name.  It's not clear that there is a middleware to wrap the request
   ; headers at this point.
   (GET "/header" [param1 :as request] (str ((request :headers) "host") " : Param1: " param1))
-  ; POST with JSON request body
-  ; TBD
+  ; POST with JSON request body plus headers
+  (POST "/post" req (str (req :json-params) " : Headers: " (req :headers)))
   ; EDN response, see: https://www.reddit.com/r/Clojure/comments/arc83f/ringcompojure_not_properly_serializing_edn/
   (GET "/edn" [] {:headers {"Content-Type" "application/edn"} :body (pr-str {:foo :bar})})
   ; HTTP error 400 with JSON
@@ -44,10 +44,12 @@
   (route/not-found "Not Found"))
 
 ; CORS : https://stackoverflow.com/questions/51503910/how-to-use-cors-with-json-response-in-compojure
+; Anti-forgery checks: https://practicalli.github.io/clojure-webapps/project-url-shortner/disable-anti-forgery-check.html
 
 (def app
   (-> app-routes
-      (wrap-defaults site-defaults)
+      ; Disable anti-forgery, which is the default, so that POST requests will work
+      (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
       (wrap-json-response)
       (wrap-json-params)
       (wrap-cors :access-control-allow-methods [:get :post :put :delete] :access-control-allow-origin [#".*"])))
