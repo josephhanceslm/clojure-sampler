@@ -25,8 +25,14 @@
   (GET "/json" [] (r/content-type (r/response {:foo "Hello World"}) "application/json"))
 
   (GET "/ok" [] {:status 200 :headers {"Content-Type" "application/json"} :body {:status "OK"}})
-  ; GET with parameter and header
-  ; TBD
+  ; GET with parameter
+  (GET "/param/:id" [id] (str "The param was: " id))
+  ; GET with FORM parameters
+  (GET "/form-params" [param1 param2] (str "Param1: " param1 ", Param2: " param2))
+  ; Header information with parameters.  Note that while the :headers is converted to a map, the actual headers
+  ; are not.  So they need to be access by name.  It's not clear that there is a middleware to wrap the request
+  ; headers at this point.
+  (GET "/header" [param1 :as request] (str ((request :headers) "host") " : Param1: " param1))
   ; POST with JSON request body
   ; TBD
   ; EDN response, see: https://www.reddit.com/r/Clojure/comments/arc83f/ringcompojure_not_properly_serializing_edn/
