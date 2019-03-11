@@ -23,8 +23,8 @@
   (GET "/config" [] (html [:h2 "Currently configured environment: " (:environment env)]))
   ; Standard GET with content-type wrapper
   (GET "/json" [] (r/content-type (r/response {:foo "Hello World"}) "application/json"))
-
-  (GET "/ok" [] {:status 200 :headers {"Content-Type" "application/json"} :body {:status "OK"}})
+  ; JSON with arbitrary header
+  (GET "/ok" [] {:status 200 :headers {"Content-Type" "application/json" "Test-Header" "this_is_a_test"} :body {:status "OK"}})
   ; GET with parameter
   (GET "/param/:id" [id] (str "The param was: " id))
   ; GET with FORM parameters
@@ -37,7 +37,7 @@
   (POST "/post" req (str (req :json-params) " : Headers: " (req :headers)))
   ; EDN response, see: https://www.reddit.com/r/Clojure/comments/arc83f/ringcompojure_not_properly_serializing_edn/
   (GET "/edn" [] {:headers {"Content-Type" "application/edn"} :body (pr-str {:foo :bar})})
-  ; HTTP error 400 with JSON
+  ; HTTP error 400 and 401 with JSON
   (GET "/error400" [] {:status 400 :headers {"Content-Type" "application/json"} :body {:status "Error 400" :message "So don't do it again"}})
   (GET "/error401" [] {:status 401 :headers {"Content-Type" "application/json"} :body {:status "Error 401" :message "So don't do it again"}})
   ; Not found response
