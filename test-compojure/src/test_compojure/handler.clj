@@ -5,6 +5,7 @@
             [compojure.route :as route]
             [config.core :refer [env]]
             [ring.middleware.cors :refer [wrap-cors]]
+            [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [hiccup.core :refer [html]]))
 ;
@@ -52,4 +53,5 @@
       (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
       (wrap-json-response)
       (wrap-json-params)
+      (wrap-params)
       (wrap-cors :access-control-allow-methods [:get :post :put :delete] :access-control-allow-origin [#".*"])))
